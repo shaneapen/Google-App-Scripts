@@ -1,0 +1,161 @@
+<link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+<style>
+body {
+	background: #222;
+}
+
+table,
+tr,
+select,
+input {
+	width: 100%;
+}
+
+td {
+	width: 50%;
+	border: none;
+	padding-right: 30px;
+}
+
+input[type="button"] {
+	cursor: pointer;
+}
+
+input {
+	height: 29px!importantb;
+}
+
+.track_form {
+	max-width: 300px;
+	background: #e2e2e2;
+	padding: 50px;
+	margin: 0 auto;
+	border-radius: 5px;
+	width: 70%;
+}
+
+.track_form img {
+	margin: 0 auto;
+}
+
+#count {
+	margin-top: 2px;
+}
+
+#count span {
+	padding: 4px;
+	margin: 3px;
+	color: white;
+	border-radius: 2px;
+}
+#c-ang{background:#C11432;}
+#c-dja{background:#47B58A;}
+#c-and{background:#595f59;}
+
+label {
+	font-weight: bold;
+	padding-bottom: 10px;
+}
+
+.error {
+	color: red;
+	font-weight: bold;
+}
+
+.success {
+	color: green;
+	font-weight: bold;
+}
+
+</style>
+<br>
+<div class="track_form">
+   <img src="https://isqip.cecieee.org/assets/img/logo/logo.png">
+   <p>Please complete your track selection at the earliest.</p>
+   <table>
+      <tbody>
+         <tr>
+            <td>
+               <div class="block form-group">
+                  <label for="registeredEmail">Registered Email</label>
+                  <input type="email" id="registeredEmail" style="width: 100%;" placeholder="youremail@gmail.com">
+               </div>
+            </td>
+         </tr>
+         <!--2nd row-->
+         <tr>
+            <td>
+               <!-- Select dropdown -->
+               <div class="block form-group">
+                  <label for="count">Available Seats</label><br>
+                  <div id="count">
+                     <span id="c-ang">Angular - <img style='width:10px;height:10px;' src='https://www.wallies.com/filebin/images/loading_apple.gif'/></span>
+                     <span id="c-and">Android - <img style='width:10px;height:10px;' src='https://www.wallies.com/filebin/images/loading_apple.gif'/></span>
+                     <span id="c-dja">Django - <img style='width:10px;height:10px;' src='https://www.wallies.com/filebin/images/loading_apple.gif'/></span>
+                  </div>
+                  <br>
+                  <label for="trackList">Select Track</label>
+                  <select id="trackList">
+                     <option selected>Angular</option>
+                     <option>Android</option>
+                     <option>Django</option>
+                  </select>
+               </div>
+            </td>
+         </tr>
+      </tbody>
+   </table>
+   <button class="action" onClick="submitData()">Submit</button>
+   <br><br>
+   <div id="message123" style="height:18px"></div>
+</div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+<script>
+   // The code in this function runs when the page is loaded.
+   $(function() {
+       google.script.run.withSuccessHandler(loadData)
+           .remainingSeats();
+   
+   });
+   
+   function loadData(data){
+     $("#c-ang").html("Angular - " + Math.floor(data['Angular'])); 
+     $("#c-and").html("Android - " + Math.floor(data['Android'])); 
+     $("#c-dja").html("Django - " + Math.floor(data['Django'])); 
+   }
+   
+   
+   function submitData() {
+       var formInput = {
+           'email': $("#registeredEmail").val(),
+           'track': $("select#trackList option:checked").val()
+       }
+       
+       if (!validateEmail(formInput['email'])){
+         $("#message123").html("<p class='error'>Invalid email address</p>");
+         return;
+       }
+       
+       $("#message123").html("<p><img style='width:10px;height:10px;' src='https://www.wallies.com/filebin/images/loading_apple.gif'/>&nbsp;processing...</p>");
+       
+       google.script.run.withSuccessHandler(serverResponse)
+           .searchDelegateByEmail(formInput); 
+   
+   }
+   
+   function serverResponse(res){
+     $("#message123").html(res);
+     google.script.run.withSuccessHandler(loadData)
+           .remainingSeats();
+   }
+   
+    function validateEmail(sEmail) {
+        var filter = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        if (filter.test(sEmail)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+   
+</script>
