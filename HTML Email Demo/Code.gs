@@ -12,18 +12,34 @@
 */
 
 
-function sendEmail() {
+function bulkSendEmail() {
   
   var htmlEmailBody = HtmlService.createTemplateFromFile('email');
-  htmlEmailBody.name = "Shan Eapen Koshy";
   
-  var toAddress = "shaneapen@gmail.com";
-  var subject = "Hurray Again!"
+  //startIndex and endIndex represents the row numbers
+  var startIndex = 3;
+  var endIndex = 3;
   
-  GmailApp.sendEmail(toAddress, subject, 'Normal Body', {
-    htmlBody : htmlEmailBody.evaluate().getContent()
-  });
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  var names = sheet.getRange("B" + startIndex + ":B"+ endIndex).getValues();
+  var emails = sheet.getRange("C" + startIndex + ":C"+ endIndex).getValues();
+  var subject = "Complete your track selection | ISQIP'19";
+   
+  var loopLimit = endIndex - (startIndex-1); //startIndex-1 because 1st row is header
   
+  for (var i = 0;i < loopLimit;++i){
+
+    htmlEmailBody.name = names[i];
+  
+    GmailApp.sendEmail(emails[i], subject, 'Normal Body', {
+      name: "Shan Eapen Koshy",
+      htmlBody : htmlEmailBody.evaluate().getContent()
+    });
+    
+  }
+  
+  sheet.getRange("B"+startIndex+":B"+ (endIndex)).setBackgroundRGB(0, 128, 0);
+
 }
 
 
