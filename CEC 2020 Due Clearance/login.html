@@ -1,0 +1,333 @@
+<!-- 
+ 1. A login form with Batch and email adddress
+ 2. Validate and return proper error message
+ 3. otherwise display the due and offer a print function - https://www.labnol.org/code/19960-convert-html-to-pdf
+
+-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+</head>
+<nav>
+    <div class="nav-wrapper cecred">
+        <a class="brand-logo center">Due Clearance Form</a>
+        <!--       <ul id="nav-mobile" class="left hide-on-med-and-down">
+        <li><a href="sass.html">Sass</a></li>
+        <li><a href="badges.html">Components</a></li>
+        <li><a href="collapsible.html">JavaScript</a></li>
+      </ul> -->
+    </div>
+</nav>
+
+
+<body>
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+            background: #424242;
+        }
+
+        label {
+            color: #424242;
+        }
+
+        main {
+            flex: 1 0 auto;
+        }
+
+        .input-field input[type="date"]:focus+label,
+        .input-field input[type="text"]:focus+label,
+        .input-field input[type="email"]:focus+label,
+        .input-field input[type="password"]:focus+label {
+            color: #b01c20;
+        }
+
+        .input-field input[type="date"]:focus,
+        .input-field input[type="text"]:focus,
+        .input-field input[type="email"]:focus,
+        .input-field input[type="password"]:focus {
+            border-bottom: 2px solid #e91e63;
+            box-shadow: none;
+        }
+
+        .cecred {
+            background: #b01c20;
+        }
+
+        .btn.cecred:hover {
+            background: #000;
+        }
+
+        .none {
+            display: none;
+        }
+
+        #receipt {
+            background: #fff;
+            padding: 20px;
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+
+        table tr th {
+            color: #ae1f26;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            bottom: 10px;
+            position: relative;
+            left: 0;
+            right: 0;
+            font-family: inherit;
+            font-weight: 400;
+        }
+
+        @media screen and (max-width: 600px) {
+            nav .brand-logo.center {
+                width: 80%;
+            }
+        }
+    </style>
+    <div class="section"></div>
+    <main>
+
+        <div class="container none" id="receipt">
+            <div>
+                <b>Name: </b><span id="receipt-name" style="text-transform:capitalize;">...</span><br>
+                <b>Admission No. </b><span id="receipt-admn">...</span><br>
+
+            </div>
+            <h4 class="center" style="color:#AE1F26">Your Dues</h4>
+            <br>
+            <div id="tableContainer">
+                <table class="striped responsive-table">
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                            <th>Note</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="dues-table">
+                        <!--
+                    <tr>
+                        <td>Library</td>
+                        <td>Late fee</td>
+                        <td>Rs.200</td>
+                    </tr>
+                 -->
+                    </tbody>
+                </table>
+            </div><br>
+            <div class='center'>
+                <button type="button" class='col s12 btn btn-small waves-effect cecred' id="downloadFormButton"
+                    onClick="downloadForm()">Download Form</button>
+                <a id="hiddenPDFLink"></a>
+            </div>
+            <blockquote>
+                Please pay your total due of <b>₹<span id="totalDueAmount">0</span></b> before <b>10/10/2020</b> to
+                the office to release your
+                caution deposit.<br><br> To view the corresponding incharges, please visit <a
+                    href="https://ceconline.ga/about/committees/" target="_blank">Faculties-in-Charge</a>
+            </blockquote>
+        </div>
+
+
+
+
+        <div class="container center" id="login">
+            <div class="z-depth-1 grey lighten-4 row"
+                style="display: inline-block; padding: 32px 48px 0px 48px; border: 1px solid #EEE;">
+
+                <form class="col s12" method="post">
+                    <div class='row'>
+                        <div class='col s12'>
+                        </div>
+                    </div>
+
+                    <div class='row'>
+                        <h5>Show Due For</h5>
+                        <div class='input-field col s12'>
+                            <input class='validate' type='email' name='email' id='email' />
+                            <label for='email'>Enter your email</label>
+                        </div>
+
+                        <div class='input-field col s12'>
+                            <input class='validate' type='text' name='admn' id='admn' />
+                            <label for='admn'>Admission No.</label>
+                        </div>
+                    </div>
+
+                    <div class='row'>
+                        <div class="input-field col s12">
+                            <select id="batch">
+                                <option value="" disabled selected>Select Batch</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                                <option value="E">E</option>
+                                <option value="F">F</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <br />
+                    <center>
+                        <div class='row'>
+                            <button type="button" class='col s12 btn btn-large waves-effect cecred'
+                                id="submit-btn">Submit</button>
+                        </div>
+                        <div class='row' id="message123">
+                        </div>
+                    </center>
+                </form>
+            </div>
+        </div>
+        <footer> Made with ❤️by Devcom</footer>
+
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('select').formSelect();
+        });
+
+
+        $('#submit-btn').click(submitData);
+
+
+        function submitData() {
+            var formInput = {
+                'email': $('#email').val(),
+                'admn': $('#admn').val(),
+                'batch': $('#batch').val()
+            }
+
+            if (!validateEmail(formInput['email'])) {
+                $("#message123").html("<p class='error'>Invalid email address</p>");
+                return;
+            }
+
+            var p = /^\d+\/{1}\d+$/;
+            if (!(formInput['admn'].match(p))) {
+                $("#message123").html("<p class='error'>Invalid admission number</p>");
+                return;
+            }
+
+            if (!formInput['batch']) {
+                $("#message123").html("<p class='error'>Please select your batch</p>");
+                return;
+            }
+
+            $("#message123").html(
+                "<p><img style='width:10px;height:10px;' src='https://www.wallies.com/filebin/images/loading_apple.gif'/>&nbsp;processing...</p>"
+            );
+
+            google.script.run.withSuccessHandler(serverResponse)
+                .searchDelegateByEmail(formInput);
+
+        }
+
+        function serverResponse(res) {
+            if (res[0] == "success") {
+                showReceipt(res[1]);
+
+                //storing userdata to session storage with admmission number as key
+                sessionStorage.setItem('userDetails-' + res[1]['data'][0], JSON.stringify(res[1]));
+
+            } else {
+                $("#message123").html(res);
+            }
+
+
+        }
+
+
+        function showReceipt(res) {
+
+            $('#login').addClass('none');
+            //$('#login').hide("fast");
+            $('#receipt').show('slow');
+
+
+            $('#receipt-name').html(res['data'][1].toLowerCase());
+            $('#receipt-admn').html(res['data'][0]);
+
+
+            var tbody = $('#dues-table');
+
+            var numOfDues = 0,
+                totalDue = 0;
+
+            for (var i = res['metadata']['dueStartCol'] - 1; i < res['header'].length; ++i) {
+
+                // if the the column contains a valid due and the status is marked pending 
+                if (res['header'][i] && res['data'][i] && (res['data'][3] == 'Pending')) {
+
+                    res['notes'][i] = res['notes'][i] ? res['notes'][i] : '-';
+                    var row = "<tr><td>" + res['header'][i] + "</td><td>" + res['notes'][i] + "</td><td>₹" + res['data']
+                        [
+                            i
+                        ] + "</td></tr>";
+
+
+                    tbody.append(row);
+
+                    ++numOfDues;
+                    totalDue += res['data'][i];
+                }
+            }
+            $('#totalDueAmount').html(totalDue);
+
+            if (!numOfDues) {
+                $('#tableContainer').html(
+                    "<img src='https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/SpongeBob_SquarePants_character.svg/1200px-SpongeBob_SquarePants_character.svg.png' style='width:100px;float:left'><h5>You have no dues!</h5>"
+                    );
+            }
+        }
+
+        function downloadForm() {
+            var admnNo = $('#receipt-admn').text();
+
+            google.script.run.withSuccessHandler(function (data) {
+                    var arr = new Uint8Array(data);
+                    var blob = new Blob([arr.buffer], {
+                        type: 'application/pdf'
+                    });
+
+                    var obj_url = window.URL.createObjectURL(blob);
+
+                    var hiddenLink = document.getElementById('hiddenPDFLink');
+                    hiddenLink.setAttribute('href', obj_url);
+                    hiddenLink.setAttribute('download', 'dues-' + admnNo + '.pdf');
+                    hiddenLink.click();
+                })
+                .makePDF(JSON.parse(sessionStorage['userDetails-' + admnNo]));
+
+        }
+
+
+        function validateEmail(sEmail) {
+            var filter =
+                /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+            if (filter.test(sEmail)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    </script>
+</body>
+
+</html>
