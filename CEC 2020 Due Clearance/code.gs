@@ -35,7 +35,6 @@ function doGet(e) {
     html.addMetaTag('viewport', 'width=device-width, initial-scale=1');
     html.setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
     return html;
-
 }
 
 function searchDelegateByEmail(formData) {
@@ -88,7 +87,6 @@ function searchDelegateByEmail(formData) {
         Logger.log('sheet not found')
         return ["error", "<p class='error'>Batch details not found! Contact admin.</p>"];
     }
-
 }
 
 
